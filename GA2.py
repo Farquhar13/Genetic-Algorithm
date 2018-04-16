@@ -16,21 +16,20 @@ class Genetic:
         random.shuffle(first_ten)
         return first_ten
 
-
     def fitness_function(self):
         x = self.c
         fitness = 4 * x[0] ** 2 - 2 * x[1] ** 3 + 9 * x[2] ** 2 - 11 * x[3] ** 2 + 5 * x[4] ** 0.5
         + (x[5] + x[6]) ** 3 - 5 * x[7] ** 2 + 10 * (x[8] - x[9]) ** 2
         return fitness
 
-    #unfinished mutation method
+    # unfinished mutation method
     def mutate(self):
         for x in self.c:
             r = random.randint(1, 100)
             if r == 1:
                 pass
 
-    # performs cross over and checks for duplicate numbers
+    # performs crossover and checks for duplicate numbers
     def switch_and_check(self, chrom, sub, cross_point):
         old_section = chrom[cross_point:]
         new_section = sub
@@ -47,7 +46,6 @@ class Genetic:
 
         return new_chrom
 
-
     # could probably do separate get cross_point and crossover methods
     def crossover(self, other_obj):
         chrom_one = self.c
@@ -58,40 +56,10 @@ class Genetic:
         sub_one = chrom_one[:cross_point]  # chrom_one up to but not including cross_point index and after
         sub_two = chrom_two[:cross_point]
 
-        new_chrom_one = self.switch_and_check(chrom_one, sub_two, cross_point)
-        new_chrom_two = other_obj.switch_and_check(chrom_two, sub_one, cross_point)
+        self.c = self.switch_and_check(chrom_one, sub_two, cross_point)
+        other_obj.c = other_obj.switch_and_check(chrom_two, sub_one, cross_point)
 
-        Offspring(new_chrom_one)
-        Offspring(new_chrom_two)
-
-    def find_lowest_two(self):
-        f_list = [c.f for c in chromosomes]
-        print f_list
-
-        for i in range(2):
-            lowest = min(f_list)
-            for c in chromosomes:
-                if c.f == lowest:
-                    chromosomes.remove(c)
-            f_list.remove(lowest)
-
-    def roulette(self):
-        total_f = 0
-        for c in chromosomes:
-            total_f += c.f
-
-
-
-
-class Offspring(Genetic):
-
-    def __init__(self, chromosome):
-        self.c = chromosome
-        self.f = self.fitness_function()
-        chromosomes.append(self)
-
-
-
+        self.f = self.fintness
 
 
 starter = Genetic()
@@ -101,16 +69,5 @@ for c in chromosomes:
 starter.crossover(second)
 for c in chromosomes:
     print c.c
-    print c.f
-
-starter.find_lowest_two()
-
-print "after find lowest"
-
-for c in chromosomes:
-    print c.c
-    print c.f
-
-
 
 
