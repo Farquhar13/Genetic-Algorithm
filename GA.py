@@ -57,11 +57,11 @@ class Genetic:
 
         return new_chrom
 
-    # determines whether to crossover and creates new objects
+    # determines whether to crossover and returns new children objects
     def crossover(self, other_obj):
         r = random.random()
         if r > 0.8:
-            #print "no crossover"
+            # no crossover essentially creates new objects that clones of the parents
             offspring_one = Genetic()
             offspring_one.c = self.c
 
@@ -89,6 +89,7 @@ class Genetic:
 
             return offspring_one, offspring_two
 
+    # finds the chromosome with the lowest fitness and replaces it with one of the children
     def replace_lowest(self):
         f_list = [c.f for c in chromosomes]
         # print f_list
@@ -101,6 +102,7 @@ class Genetic:
                     c = self
             f_list.remove(lowest)
 
+    # sets c.scaled for all chromosomes so that all every fitness is positive
     def scaling(self):
         f_list = [c.f for c in chromosomes]
         min_f = min(f_list)
@@ -113,7 +115,7 @@ class Genetic:
             for c in chromosomes:
                 c.scaled = c.f + abs(min_f) + 100
 
-    # weights the chromosomes form 0-1 for roulette selection
+    # weights the chromosomes from 0-1 for roulette selection
     def weighting(self):
         scaled_total = 0
         scaled_list = [c.scaled for c in chromosomes]
