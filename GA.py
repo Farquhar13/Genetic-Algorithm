@@ -1,4 +1,5 @@
 import random
+import sys
 
 population_size = 50
 chromosomes = []
@@ -35,10 +36,12 @@ class Genetic:
                     y = self.c[0]
                     self.c[i] = y
                     self.c[0] = x
+                if i > 9:
+                    y = self.c[i + 1]
+                    self.c[i] = y
+                    self.c[i + 1] = x
 
-                y = self.c[i+1]
-                self.c[i] = y
-                self.c[i+1] = x
+        self.f = self.fitness_function()
 
 
     # performs cross over and checks for duplicate numbers
@@ -61,23 +64,33 @@ class Genetic:
 
     # remember to only call this 80% of the time in the looping method
     def crossover(self, other_obj):
-        chrom_one = self.c
-        chrom_two = other_obj.c
+        r = random.random()
+        if r > 0.8:
+            print "no crossover"
+            return self, other_obj, False
+        if r <= 0.8:
+            chrom_one = self.c
+            chrom_two = other_obj.c
 
-        cross_point = random.randint(1, 9)  # going from 1 to 9 intentionally does not include the last index
-        print cross_point
-        sub_one = chrom_one[:cross_point]  # chrom_one up to but not including cross_point index and after
-        sub_two = chrom_two[:cross_point]
+            cross_point = random.randint(1, 9)  # going from 1 to 9 intentionally does not include the last index
+            # print "crossover point", cross_point
+            sub_one = chrom_one[:cross_point]  # chrom_one up to but not including cross_point index and after
+            sub_two = chrom_two[:cross_point]
 
-        new_chrom_one = self.switch_and_check(chrom_one, sub_two, cross_point)
-        new_chrom_two = other_obj.switch_and_check(chrom_two, sub_one, cross_point)
+            new_chrom_one = self.switch_and_check(chrom_one, sub_two, cross_point)
+            new_chrom_two = other_obj.switch_and_check(chrom_two, sub_one, cross_point)
 
-        Offspring(new_chrom_one)
-        Offspring(new_chrom_two)
+            offspring_one = Genetic()
+            offspring_one.c = new_chrom_one
+
+            offspring_two = Genetic()
+            offspring_two.c = new_chrom_two
+
+            return offspring_one, offspring_two, True
 
     def find_lowest_two(self):
         f_list = [c.f for c in chromosomes]
-        print f_list
+        # print f_list
 
         for i in range(2):
             lowest = min(f_list)
@@ -98,66 +111,100 @@ class Genetic:
             for c in chromosomes:
                 c.scaled = c.f + abs(min_f) + 100
 
-    def weighting(self):
-
-
-    def roulette(self):
-        self.scaling()
-        self.weighted()
+        '''     
         print "scaled"
         for c in chromosomes:
-            print c.scaled, ", ",
+            print c.scaled,
         print
+        print
+        '''
 
+    def weighting(self):
         scaled_total = 0
         scaled_list = [c.scaled for c in chromosomes]
         for x in scaled_list:
             scaled_total += x
 
-        weighted_total = 0
+        #print "printed weighted"
         for c in chromosomes:
             c.weighted = c.scaled / scaled_total
-            weighted_total += c.weighted
-
-        print "summing c.weighted"
-        print weighted_total
+            # print c.weighted
+        # print
 
 
+    # does not remove chromosome from list
+    def roulette(self):
+        self.scaling()
+        self.weighting()
 
+        parents = []
+        for i in range(2):
+            r = random.random()
+            weighted_total = 0
 
+            for c in chromosomes:
+                weighted_total += c.weighted
+                if weighted_total > r:
+                    parents.append(c)
+                    break
+        return parents
 
-class Offspring(Genetic):
+    def best(self):
+        highest = -sys.maxint - 1
 
-    def __init__(self, chromosome):
-        self.c = chromosome
-        self.f = self.fitness_function()
-        self.scaled = None
-        self.weighted = None
-        chromosomes.append(self)
+        for c in chromosomes:
+            if c.f > highest:
+                highest = c.f
 
-
-
-
-
+        print highest
+'''
 starter = Genetic()
 second = Genetic()
+print "printing starting 2 chromosomes"
 for c in chromosomes:
     print c.c
-starter.crossover(second)
+print
+
+print "le best"
+print starter.best()
+print
+
+
+#roulette function to determine which to call with
+parents = starter.roulette()
+parents[0].crossover(parents[1])
+print "after crossover"
 for c in chromosomes:
     print c.c
     print c.f
+print
 
-starter.roulette()
 
 starter.find_lowest_two()
-
 print "after find lowest"
-
 for c in chromosomes:
     print c.c
     print c.f
     print c.scaled
+'''
+# looping
+for i in range(50):
+    new_genetic = Genetic()
 
+for i in range(100):
+    for c in chromosomes:
+        if not(c is None):
+            chrom = c
+            break
 
+    parents = chrom.roulette()
 
+    c_1, c_2, did_crossover = parents[0].crossover(parents[1])
+
+    c_1.mutate()
+    c_2.mutate()
+
+    if did_crossover:
+        chrom.find_lowest_two()
+
+    c_1.best()

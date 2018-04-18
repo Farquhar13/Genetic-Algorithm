@@ -1,11 +1,12 @@
 import random
+import sys
 
-list = [4,2,2,3]
 
-print min(list)
-list.remove(2)
-print list
-
-a = None
-
+a, b = 1, 2
 print a
+
+if False:
+    print "yes!"
+
+list = []
+print min(list)
