@@ -8,5 +8,11 @@ print a
 if False:
     print "yes!"
 
-list = []
-print min(list)
+
+
+def n(value = None):
+    if value == None:
+        value = 5
+    print value
+
+n(6)
